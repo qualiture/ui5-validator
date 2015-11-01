@@ -1,8 +1,8 @@
 /*global sap */
 
-sap.ui.define([], function () {
+sap.ui.define([], function() {
     "use strict";
-    
+
     /**
      * @name        nl.qualiture.plunk.demo.utils.Validator
      *
@@ -13,27 +13,27 @@ sap.ui.define([], function () {
      * @author      Robin van het Hof
      */
     var Validator = function() {
-    	  this._isValid               = true;
-		    this._isValidationPerformed = false;    
+        this._isValid = true;
+        this._isValidationPerformed = false;
     };
-    
+
     /**
      * Returns true _only_ when the form validation has been performed, and no validation errors were found
      * @memberof nl.qualiture.plunk.demo.utils.Validator
      *
      * @returns {boolean}
      */
-  	Validator.prototype.isValid = function() {
-  		  return this._isValidationPerformed && this._isValid;
-  	};
-	
+    Validator.prototype.isValid = function() {
+        return this._isValidationPerformed && this._isValid;
+    };
+
     /**
      * Recursively validates the given oControl and any aggregations (i.e. child controls) it may have
      * @memberof nl.qualiture.plunk.demo.utils.Validator
      *
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
      */
-	  Validator.prototype.validate = function(oControl) {
+    Validator.prototype.validate = function(oControl) {
         var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields"],
             aControlAggregation   = null,
             aValidateProperties   = ["value", "selectedKey", "text"], // yes, I want to validate Select and Text controls too
@@ -49,11 +49,11 @@ sap.ui.define([], function () {
             if (oControl.getVisible()) {
 
                 // check control for any properties worth validating 
-                for (i=0; i<aValidateProperties.length; i+=1) {
+                for (i = 0; i < aValidateProperties.length; i += 1) {
                     if (oControl.getBinding(aValidateProperties[i])) {
-                    	// check if a data type exists (which may have validation constraints)
+                        // check if a data type exists (which may have validation constraints)
                         if (oControl.getBinding(aValidateProperties[i]).oType) {
-                        	// try validating the bound value
+                            // try validating the bound value
                             try {
                                 oControl.getBinding(aValidateProperties[i]).oType.validateValue(oControl.getProperty(aValidateProperties[i]));
                             }
@@ -72,13 +72,13 @@ sap.ui.define([], function () {
 
                 // if the control could not be validated, it may have aggregations
                 if (!isValidatedControl) {
-                    for (i=0; i<aPossibleAggregations.length; i+=1) {
+                    for (i = 0; i < aPossibleAggregations.length; i += 1) {
                         aControlAggregation = oControl.getAggregation(aPossibleAggregations[i]);
 
                         if (aControlAggregation) {
                             // generally, aggregations are of type Array
                             if (aControlAggregation instanceof Array) {
-                                for (j=0; j<aControlAggregation.length; j+=1) {
+                                for (j = 0; j < aControlAggregation.length; j += 1) {
                                     this.validate(aControlAggregation[j]);
                                 }
                             }
@@ -92,7 +92,7 @@ sap.ui.define([], function () {
             }
         }
         this._isValidationPerformed = true;
-	  };
-	
-	  return Validator;
+    };
+
+    return Validator;
 });
