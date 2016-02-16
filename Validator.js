@@ -1,6 +1,9 @@
 /*global sap */
 
-sap.ui.define([], function() {
+sap.ui.define([
+	'sap/ui/core/message/Message',
+	'sap/ui/core/MessageType'
+], function(Message, MessageType) {
     "use strict";
 
     /**
@@ -32,8 +35,21 @@ sap.ui.define([], function() {
      * @memberof nl.qualiture.plunk.demo.utils.Validator
      *
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
+	 * @return {boolean} whether the oControl is valid or not.
      */
-    Validator.prototype.validate = function(oControl) {
+    Validator.prototype.validate = function(control) {
+        sap.ui.getCore().getMessageManager().removeAllMessages();
+        this._validate(control);
+        return this.isValid();
+    };
+	
+    /**
+     * Recursively validates the given oControl and any aggregations (i.e. child controls) it may have
+     * @memberof nl.qualiture.plunk.demo.utils.Validator
+     *
+     * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
+     */
+    Validator.prototype._validate = function(oControl) {
         var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields"],
             aControlAggregation   = null,
             aValidateProperties   = ["value", "selectedKey", "text"], // yes, I want to validate Select and Text controls too
@@ -52,17 +68,22 @@ sap.ui.define([], function() {
                 for (i = 0; i < aValidateProperties.length; i += 1) {
                     if (oControl.getBinding(aValidateProperties[i])) {
                         // check if a data type exists (which may have validation constraints)
-                        if (oControl.getBinding(aValidateProperties[i]).oType) {
+                        if (oControl.getBinding(aValidateProperties[i]).getType()) {
                             // try validating the bound value
                             try {
-                                oControl.getBinding(aValidateProperties[i]).oType.validateValue(oControl.getProperty(aValidateProperties[i]));
+                                oControl.getBinding(aValidateProperties[i]).getType().validateValue(oControl.getProperty(aValidateProperties[i]));
                             }
                             // catch any validation errors
                             catch (ex) {
                                 this._isValid = false;
-
-                                oControl.setValueState("Error");
-                                oControl.setValueStateText(ex.message);
+								sap.ui.getCore().getMessageManager().addMessages(
+									new Message({
+										message: ex.message,
+										type: MessageType.Error,
+										target: oControl.getBinding(aValidateProperties[i]).getPath(),
+										processor: oControl.getBinding(aValidateProperties[i]).getModel()
+									})
+								);
                             }
 
                             isValidatedControl = true;
@@ -79,12 +100,12 @@ sap.ui.define([], function() {
                             // generally, aggregations are of type Array
                             if (aControlAggregation instanceof Array) {
                                 for (j = 0; j < aControlAggregation.length; j += 1) {
-                                    this.validate(aControlAggregation[j]);
+                                    this._validate(aControlAggregation[j]);
                                 }
                             }
                             // ...however, with sap.ui.layout.form.Form, it is a single object *sigh*
                             else {
-                                this.validate(aControlAggregation);
+                                this._validate(aControlAggregation);
                             }
                         }
                     }
