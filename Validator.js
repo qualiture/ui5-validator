@@ -37,9 +37,9 @@ sap.ui.define([
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
 	 * @return {boolean} whether the oControl is valid or not.
      */
-    Validator.prototype.validate = function(control) {
+    Validator.prototype.validate = function(oControl) {
         sap.ui.getCore().getMessageManager().removeAllMessages();
-        this._validate(control);
+        this._validate(oControl);
         return this.isValid();
     };
 	
