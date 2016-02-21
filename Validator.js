@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @return {boolean} whether the oControl is valid or not.
      */
     Validator.prototype.validate = function(oControl) {
-		this._isValid = false;
+        this._isValid = true;
         sap.ui.getCore().getMessageManager().removeAllMessages();
         this._validate(oControl);
         return this.isValid();
