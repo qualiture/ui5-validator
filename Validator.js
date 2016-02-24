@@ -77,11 +77,13 @@ sap.ui.define([
                             // catch any validation errors
                             catch (ex) {
                                 this._isValid = false;
+                                var oControlBinding = oControl.getBinding(aValidateProperties[i]);
 								sap.ui.getCore().getMessageManager().addMessages(
 									new Message({
 										message: ex.message,
 										type: MessageType.Error,
-										target: oControl.getBinding(aValidateProperties[i]).getPath(),
+										target: ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "" )
+												+ oControlBinding.getPath(),
 										processor: oControl.getBinding(aValidateProperties[i]).getModel()
 									})
 								);
