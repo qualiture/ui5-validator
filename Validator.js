@@ -1,9 +1,9 @@
 /*global sap */
 
 sap.ui.define([
-	'sap/ui/core/message/Message',
-	'sap/ui/core/MessageType'
-], function(Message, MessageType) {
+    'sap/ui/core/message/Message',
+    'sap/ui/core/MessageType'
+], function (Message, MessageType) {
     "use strict";
 
     /**
@@ -15,7 +15,7 @@ sap.ui.define([
      * @version     Oktober 2015
      * @author      Robin van het Hof
      */
-    var Validator = function() {
+    var Validator = function () {
         this._isValid = true;
         this._isValidationPerformed = false;
     };
@@ -26,7 +26,7 @@ sap.ui.define([
      *
      * @returns {boolean}
      */
-    Validator.prototype.isValid = function() {
+    Validator.prototype.isValid = function () {
         return this._isValidationPerformed && this._isValid;
     };
 
@@ -35,26 +35,28 @@ sap.ui.define([
      * @memberof nl.qualiture.plunk.demo.utils.Validator
      *
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
-	 * @return {boolean} whether the oControl is valid or not.
+     * @return {boolean} whether the oControl is valid or not.
      */
-    Validator.prototype.validate = function(oControl) {
+    Validator.prototype.validate = function (oControl) {
         this._isValid = true;
         sap.ui.getCore().getMessageManager().removeAllMessages();
         this._validate(oControl);
         return this.isValid();
     };
-	
+
     /**
      * Recursively validates the given oControl and any aggregations (i.e. child controls) it may have
      * @memberof nl.qualiture.plunk.demo.utils.Validator
      *
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
      */
-    Validator.prototype._validate = function(oControl) {
+    Validator.prototype._validate = function (oControl) {
         var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields"],
             aControlAggregation   = null,
+            oControlBinding       = null,
             aValidateProperties   = ["value", "selectedKey", "text"], // yes, I want to validate Select and Text controls too
             isValidatedControl    = false,
+            oExternalValue, oInternalValue,
             i, j;
 
         // only validate controls and elements which have a 'visible' property
@@ -72,21 +74,24 @@ sap.ui.define([
                         if (oControl.getBinding(aValidateProperties[i]).getType()) {
                             // try validating the bound value
                             try {
-                                oControl.getBinding(aValidateProperties[i]).getType().validateValue(oControl.getProperty(aValidateProperties[i]));
+                                oControlBinding = oControl.getBinding(aValidateProperties[i]);
+                                oExternalValue  = oControl.getProperty(aValidateProperties[i]);
+                                oInternalValue  = oControlBinding.getType().parseValue(oExternalValue, oControlBinding.sInternalType);
+                                oControlBinding.getType().validateValue(oInternalValue);
                             }
                             // catch any validation errors
                             catch (ex) {
                                 this._isValid = false;
-                                var oControlBinding = oControl.getBinding(aValidateProperties[i]);
-								sap.ui.getCore().getMessageManager().addMessages(
-									new Message({
-										message: ex.message,
-										type: MessageType.Error,
-										target: ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "" )
-												+ oControlBinding.getPath(),
-										processor: oControl.getBinding(aValidateProperties[i]).getModel()
-									})
-								);
+                                oControlBinding = oControl.getBinding(aValidateProperties[i]);
+                                sap.ui.getCore().getMessageManager().addMessages(
+                                    new Message({
+                                        message  : ex.message,
+                                        type     : MessageType.Error,
+                                        target   : ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "") +
+                                                oControlBinding.getPath(),
+                                        processor: oControl.getBinding(aValidateProperties[i]).getModel()
+                                    })
+                                );
                             }
 
                             isValidatedControl = true;
