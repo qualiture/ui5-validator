@@ -51,13 +51,13 @@ sap.ui.define([
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
      */
     Validator.prototype._validate = function (oControl) {
-        var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields", "sections", "subSections", "_grid"],
+        var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields", "sections", "subSections", "_grid", "cells"],
             aControlAggregation   = null,
             oControlBinding       = null,
             aValidateProperties   = ["value", "selectedKey", "text"], // yes, I want to validate Select and Text controls too
             isValidatedControl    = false,
             oExternalValue, oInternalValue,
-            i, j;
+            i, j, editable;
 
         // only validate controls and elements which have a 'visible' property
         if (oControl instanceof sap.ui.core.Control ||
@@ -72,6 +72,16 @@ sap.ui.define([
                     if (oControl.getBinding(aValidateProperties[i])) {
                         // check if a data type exists (which may have validation constraints)
                         if (oControl.getBinding(aValidateProperties[i]).getType()) {
+                        	try {
+                        		// Check, if it is editable
+                        		editable = oControl.getProperty("editable");
+                        		if(editable === false) {
+                        			continue;
+                        		}
+                        	}
+                        	catch (ex) {
+                        	 // do nothing
+                        	}
                             // try validating the bound value
                             try {
                                 oControlBinding = oControl.getBinding(aValidateProperties[i]);
