@@ -73,38 +73,37 @@ sap.ui.define([
                         // check if a data type exists (which may have validation constraints)
                         if (oControl.getBinding(aValidateProperties[i]).getType()) {
                         	try {
-                        		// Check, if it is editable
-                        		editable = oControl.getProperty("editable");
-                        		if(editable === false) {
-                        			continue;
-                        		}
+								editable = oControl.getProperty("editable");
                         	}
                         	catch (ex) {
-                        	 // do nothing
+                        		editable = true;
                         	}
-                            // try validating the bound value
-                            try {
-                                oControlBinding = oControl.getBinding(aValidateProperties[i]);
-                                oExternalValue  = oControl.getProperty(aValidateProperties[i]);
-                                oInternalValue  = oControlBinding.getType().parseValue(oExternalValue, oControlBinding.sInternalType);
-                                oControlBinding.getType().validateValue(oInternalValue);
-                            }
-                            // catch any validation errors
-                            catch (ex) {
-                                this._isValid = false;
-                                oControlBinding = oControl.getBinding(aValidateProperties[i]);
-                                sap.ui.getCore().getMessageManager().addMessages(
-                                    new Message({
-                                        message  : ex.message,
-                                        type     : MessageType.Error,
-                                        target   : ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "") +
-                                                oControlBinding.getPath(),
-                                        processor: oControl.getBinding(aValidateProperties[i]).getModel()
-                                    })
-                                );
-                            }
 
-                            isValidatedControl = true;
+							if (editable) {
+								// try validating the bound value
+								try {
+									oControlBinding = oControl.getBinding(aValidateProperties[i]);
+									oExternalValue  = oControl.getProperty(aValidateProperties[i]);
+									oInternalValue  = oControlBinding.getType().parseValue(oExternalValue, oControlBinding.sInternalType);
+									oControlBinding.getType().validateValue(oInternalValue);
+								}
+								// catch any validation errors
+								catch (ex) {
+									this._isValid = false;
+									oControlBinding = oControl.getBinding(aValidateProperties[i]);
+									sap.ui.getCore().getMessageManager().addMessages(
+										new Message({
+											message  : ex.message,
+											type     : MessageType.Error,
+											target   : ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "") +
+													oControlBinding.getPath(),
+											processor: oControl.getBinding(aValidateProperties[i]).getModel()
+										})
+									);
+								}
+
+								isValidatedControl = true;
+							}
                         }
                     }
                 }
