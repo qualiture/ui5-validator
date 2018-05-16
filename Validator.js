@@ -52,7 +52,11 @@ sap.ui.define([
      * @param {(sap.ui.core.Control|sap.ui.layout.form.FormContainer|sap.ui.layout.form.FormElement)} oControl - The control or element to be validated.
      */
     Validator.prototype._validate = function (oControl) {
+<<<<<<< HEAD
         var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields", "sections", "subSections", "_grid"],
+=======
+        var aPossibleAggregations = ["items", "content", "form", "formContainers", "formElements", "fields", "sections", "subSections", "_grid", "cells", "_page"],
+>>>>>>> 8be4937... Added support for sap.m.semantic.SemanticPage (added aggregation "_page")
             aControlAggregation   = null,
             oControlBinding       = null,
             aValidateProperties   = ["value", "selectedKey", "text"], // yes, I want to validate Select and Text controls too
