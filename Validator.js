@@ -120,6 +120,10 @@ sap.ui.define([
                                     processor: oControl.getBinding(aValidateProperties[i]).getModel()
                                 })
                             );
+                        } else if (oControl.mAggregations.picker && oControl.mProperties.selectedKey.length === 0) { // might be a select 
+                            this._isValid = false;
+                            //TODO: i18n this
+                            oControl.setValueState(ValueState.Error, "Please choose an entry!");
                         } else {
                             oControl.setValueState(ValueState.None);
                         }
