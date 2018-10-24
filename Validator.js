@@ -1,9 +1,10 @@
 /*global sap */
 
 sap.ui.define([
-    'sap/ui/core/message/Message',
-    'sap/ui/core/MessageType'
-], function (Message, MessageType) {
+    "sap/ui/core/message/Message",
+    "sap/ui/core/MessageType",
+    "sap/ui/core/ValueState"
+], function (Message, MessageType, ValueState) {
     "use strict";
 
     /**
@@ -82,6 +83,8 @@ sap.ui.define([
                             // catch any validation errors
                             catch (ex) {
                                 this._isValid = false;
+                                oControl.setValueState(ValueState.Error);
+                                
                                 oControlBinding = oControl.getBinding(aValidateProperties[i]);
                                 sap.ui.getCore().getMessageManager().addMessages(
                                     new Message({
