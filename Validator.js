@@ -99,7 +99,36 @@ sap.ui.define([
                     }
 
                     isValidatedControl = true;
-                } 
+
+                } else if (oControl.getRequired 
+                        && oControl.getRequired() === true ) {
+                    try {
+                        oControlBinding = oControl.getBinding(aValidateProperties[i]);
+                        oExternalValue = oControl.getProperty(aValidateProperties[i]);
+                        
+                        if (!oExternalValue || oExternalValue==="") {
+                            this._isValid = false;
+                            var oMessage = "Please fill this mandatory field!"
+                            oControl.setValueState(ValueState.Error, oMessage);
+                            
+                            sap.ui.getCore().getMessageManager().addMessages(
+                                new Message({
+                                    message: oMessage,
+                                    type: MessageType.Error,
+                                    target : ( oControlBinding.getContext() ? oControlBinding.getContext().getPath() + "/" : "") +
+                                    oControlBinding.getPath(),
+                                    processor: oControl.getBinding(aValidateProperties[i]).getModel()
+                                })
+                            );
+                        } else {
+                            oControl.setValueState(ValueState.None);
+                        }
+                    } catch (ex) {
+                        // Validation failed
+                    }
+                } else {
+                    oControl.setValueState(ValueState.None);
+                }
             }
 
             // if the control could not be validated, it may have aggregations
