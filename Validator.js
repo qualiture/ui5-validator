@@ -108,7 +108,7 @@ sap.ui.define([
                         
                         if (!oExternalValue || oExternalValue==="") {
                             this._isValid = false;
-                            var oMessage = "Please fill this mandatory field!"
+                            var oMessage = "Please fill this mandatory field!";
                             oControl.setValueState(ValueState.Error, oMessage);
                             
                             sap.ui.getCore().getMessageManager().addMessages(
@@ -120,7 +120,8 @@ sap.ui.define([
                                     processor: oControl.getBinding(aValidateProperties[i]).getModel()
                                 })
                             );
-                        } else if (oControl.mAggregations.picker && oControl.mProperties.selectedKey.length === 0) { // might be a select 
+                        } else if (oControl.getAggregation("picker") 
+                                && oControl.getProperty("selectedKey").length === 0 ) { // might be a select 
                             this._isValid = false;
                             //TODO: i18n this
                             oControl.setValueState(ValueState.Error, "Please choose an entry!");
@@ -131,7 +132,7 @@ sap.ui.define([
                         // Validation failed
                     }
                 } else {
-                    oControl.setValueState(ValueState.None);
+                    //oControl.setValueState(ValueState.None);
                 }
             }
 
