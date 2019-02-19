@@ -73,7 +73,7 @@ sap.ui.define([
                     	// check if a data type exists (which may have validation constraints)
                         && oControl.getBinding(aValidateProperties[i]).getType() 
                         ) {
-                	try { oControl.getProperty("editable"); }
+                	try { editable = oControl.getProperty("editable"); }
                 	catch (ex) { editable = true; }
                     
                     if(editable) {
