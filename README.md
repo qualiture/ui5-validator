@@ -10,3 +10,7 @@ See [this Plunker demo](http://plnkr.co/edit/VaQHBjDi5ILlzZnQ3hU3?p=preview) for
 This demo is related to SCN blog [Generic UI5 form validator](http://scn.sap.com/community/developer-center/front-end/blog/2015/11/01/generic-sapui5-form-validator).
 
 Support branch created
+
+## Added features (from master repo)
+- Correction for required fields
+- Control custom controls
