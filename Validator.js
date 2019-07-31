@@ -130,6 +130,7 @@ sap.ui.define([
                             oControl.setValueState(ValueState.Error, "Please choose an entry!");
                         } else {
                             oControl.setValueState(ValueState.None);
+			    break;
                         }
                     } catch (ex) {
                         // Validation failed
