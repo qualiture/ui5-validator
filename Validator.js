@@ -140,6 +140,21 @@ sap.ui.define([
                 }
             }
 
+	    // Control custom validation
+	    if (oControl.getValueState && oControl.getValueState() === sap.ui.core.ValueState.Error) {
+	        this._isValid = false;
+		oMessage = (oControl.getValueStateText && oControl.getValueStateText()) ? oControl.getValueStateText() : "Wrong input";
+
+		sap.ui.getCore().getMessageManager().addMessages(
+                    new Message({
+                        message: oMessage,
+                        type: MessageType.Error
+                    })
+                );
+
+		isValidatedControl = true;
+	    }
+
             // if the control could not be validated, it may have aggregations
             if (!isValidatedControl) {
                 for (i = 0; i < aPossibleAggregations.length; i += 1) {
